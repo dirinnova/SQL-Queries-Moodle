@@ -1,3 +1,4 @@
+/* Devuelve el listado de aulas con filtros disponibles de fechas de cierre hasta 2015, 2016, 2017, 2018, 2019, 2020-1 */
 SELECT c.id Id_aula, c.fullname Aula, c.shortname NombreCorto, c.format Formato, c.visible AulaVisible,
 CASE
     WHEN LOCATE ("-v-i-", c.shortname) THEN "100% Virtual"
