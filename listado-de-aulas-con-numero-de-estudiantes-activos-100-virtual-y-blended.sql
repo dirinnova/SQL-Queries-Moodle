@@ -1,3 +1,4 @@
+/* Devuelve el listado de aulas solo 100% virtual y blended con la fecha fin de los estudiantes*/
 SELECT Id_curso, Curso, NombreCorto AS "Nombre corto", Formato, CursoVisible AS "Visible",Tipoaula AS "Tipo Aula",Tipoaulanombrecorto AS "Tipo aula nombre corto",Estudiantesactivoshoy AS "Estudiantes activos a hoy",Estudiantes, fechainicio, fechafin,
 Profesor,Profesoremail AS "Profesor email",CAT1,CAT2,CAT3,CAT4,CAT5,CAT6,CAT7, MAX(fin)
  FROM (
