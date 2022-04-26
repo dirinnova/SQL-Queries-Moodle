@@ -53,3 +53,4 @@ Tabla que guarda la información sobre las instancias de complementos de inscrip
 ### **Table user_enrolments:**
 Tabla que guarda la información sobre los usuarios que participan en cursos (también conocidos como usuarios inscritos): todos los que participan o son visibles en el curso, es decir, tanto profesores como estudiantes.
 [Más detalles](https://moodleschema.zoola.io/tables/user_enrolments.html)
+
