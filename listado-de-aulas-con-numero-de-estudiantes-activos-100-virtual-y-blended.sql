@@ -1,4 +1,27 @@
-/* Devuelve el listado de aulas solo 100% virtual y blended con la fecha fin de los estudiantes*/
+/* Esta consulta devuelve el listado de aulas solo 100% virtual y blended con la fecha fin de los estudiantes
+-- Listado de campos que devuelve la consulta:
+### Id_curso:
+Es el número consecutivo de la tabla {course}
+
+### Curso
+Nombre del curso (aula)
+
+### Nombre corto
+Nombre corto del curso (aula)
+
+### Formato
+Es el formato que tiene configurada el aula actualmente.
+
+### Visible
+Visibilidad del curso (aula)
+
+### Tipo Aula
+Es la configuración que tiene el aula en las opciones general del aula
+
+
+
+
+*/
 SELECT Id_curso, Curso, NombreCorto AS "Nombre corto", Formato, CursoVisible AS "Visible",Tipoaula AS "Tipo Aula",Tipoaulanombrecorto AS "Tipo aula nombre corto",Estudiantesactivoshoy AS "Estudiantes activos a hoy",Estudiantes, fechainicio, fechafin,
 Profesor,Profesoremail AS "Profesor email",CAT1,CAT2,CAT3,CAT4,CAT5,CAT6,CAT7, MAX(fin)
  FROM (
