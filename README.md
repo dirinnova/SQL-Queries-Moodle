@@ -1,64 +1,55 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# SQL's Moodle
+SQL's reports from moodle 3.9.8+database
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About SQL's Moodle
 
-## About Laravel
+SQL's reports son listados de cursos (aulas), con información de cada uno, desde su datos básicos como nombres y descripciones, números de estudiantes inscritos y categorías a las que pertenece.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Database Tables
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Las siguientes tablas son las consultadas en la base de datos:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- mdl_course
+- mdl_context
+- mdl_role_assignments
+- mdl_role
+- mdl_user
+- mdl_course_categories
+- mdl_enrol
+- mdl_user_enrolments
 
-## Learning Laravel
+En las consultas es necesario que cada uno de los nombres se les elimine del nombre el prefijo "mdl_" y luego el nombre se concatena entre corchetes "{}".
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Descripcion Database Tables
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### **Table course:**
+Tabla principal que contiene la información básica de los cursos (aulas).
+[Más detalles](https://moodleschema.zoola.io/tables/course.html)
 
-## Laravel Sponsors
+### **Table context:**
+Tabla intermedia para la relación entre asignaciones de roles de usuarios.
+[Más detalles](https://moodleschema.zoola.io/tables/context.html)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### **Table role_assignments:**
+Tabla que guarda la asignación de roles de usuarios en diferentes contextos.
+[Más detalles](https://moodleschema.zoola.io/tables/role_assignments.html)
 
-### Premium Partners
+### **Table role:**
+Tabla que guarda los diferentes roles en Moodle.
+[Más detalles](https://moodleschema.zoola.io/tables/role.html)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### **Table user:**
+Tabla que guarda los datos de cada usuario.
+[Más detalles](https://moodleschema.zoola.io/tables/user.html)
 
-## Contributing
+### **Table course_categories:**
+Tabla que guarda la información sobre cada categoría de los cursos.
+[Más detalles](https://moodleschema.zoola.io/tables/course_categories.html)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### **Table enrol:**
+Tabla que guarda la información sobre las instancias de complementos de inscripción utilizados en cursos, los campos marcados como personalizados tienen un significado definido por complemento, el núcleo no los toca. Cree una nueva tabla vinculada si necesita aún más campos personalizados.
+[Más detalles](https://moodleschema.zoola.io/tables/enrol.html)
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### **Table user_enrolments:**
+Tabla que guarda la información sobre los usuarios que participan en cursos (también conocidos como usuarios inscritos): todos los que participan o son visibles en el curso, es decir, tanto profesores como estudiantes.
+[Más detalles](https://moodleschema.zoola.io/tables/user_enrolments.html)
