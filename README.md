@@ -1,9 +1,9 @@
-# SQL's Moodle
-SQL's reports from moodle 3.9.8+database
+# SQL Queries Moodle
+SQL Queries from moodle 3.9.8+database
 
-## About SQL's Moodle
+## About SQL Queries Moodle
 
-SQL's reports son listados de cursos (aulas), con información de cada uno, desde su datos básicos como nombres y descripciones, números de estudiantes inscritos y categorías a las que pertenece.
+SQL Queries Moodle son listados de cursos (aulas), con información de cada uno, desde su datos básicos como nombres y descripciones, números de estudiantes inscritos y categorías a las que pertenece.
 
 ## Database Tables
 
