@@ -3,7 +3,11 @@ SQL Queries from moodle 3.9.8+database
 
 ## About SQL Queries Moodle
 
-SQL Queries Moodle son listados de cursos (aulas), con información de cada uno, desde su datos básicos como nombres y descripciones, números de estudiantes inscritos y categorías a las que pertenece.
+SQL Queries Moodle son consultas a la base de datos de Moodle, que nos devuelve los cursos (aulas) con información de cada uno, desde su datos básicos como nombres y descripciones, números de estudiantes inscritos y categorías a las que pertenece.
+
+Estas consultas estan optimizadas para su uso en:
+- El módulo de "Build by SQL" de Intelliboard. [+Info](https://support.intelliboard.net/hc/en-us/articles/360019906731-Max-Report-Builder-Build-by-SQL-Moodle-LMS)
+- El Plugin de Moodle: "Ad-hoc database queries". [+Info](https://moodle.org/plugins/report_customsql)
 
 ## Database Tables
 
