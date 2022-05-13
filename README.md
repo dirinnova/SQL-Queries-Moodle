@@ -11,7 +11,7 @@ These queries are optimized for use in:
 
 ## Database Tables
 
-Las siguientes tablas son las consultadas en la base de datos:
+The following tables are queried in the database:
 
 - [mdl_course](#information-about-database-tables)
 - [mdl_context](#information-about-database-tables)
