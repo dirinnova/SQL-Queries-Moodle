@@ -1,15 +1,15 @@
 SELECT c.id Id_aula,
  (SELECT COUNT(*) as CantidadScorms
-FROM {scorm} sco 
-WHERE c.id=sco.course Group by sco.course ORDER BY sco.id DESC LIMIT 1) "Scorm",
+    FROM {scorm} sco 
+    WHERE c.id=sco.course Group by sco.course ORDER BY sco.id DESC LIMIT 1) "Scorm", /* Cantidad de contenido SCORM por aula */
 
  (SELECT COUNT(*) as CantidadBooks
-FROM {book} boo 
-WHERE c.id=boo.course Group by boo.course ORDER BY boo.id DESC LIMIT 1) "Libro",
+    FROM {book} boo 
+    WHERE c.id=boo.course Group by boo.course ORDER BY boo.id DESC LIMIT 1) "Libro", /* Cantidad de recursos tipo libros en el aula */
 
  (SELECT cfo.value as CantidadUnidades
 FROM {course_format_options} cfo 
-WHERE cfo.courseid = c.id and cfo.name="numsections" ORDER BY cfo.id DESC LIMIT 1) "Unidades",
+WHERE cfo.courseid = c.id and cfo.name="numsections" ORDER BY cfo.id DESC LIMIT 1) "Unidades", /* cantidad de secciones por aula */
 
  c.fullname Aula, c.shortname NombreCorto, c.format Formato, c.visible AulaVisible,
 CASE
@@ -22,71 +22,72 @@ CASE
     WHEN LOCATE ("-M-i-", c.shortname) THEN "Blended"
     WHEN LOCATE ("-M-I-", c.shortname) THEN "Blended"
     ELSE "Aula apoyo"
-END "Tipo aula",
+END "Tipo aula", /* Tipo de aula según el nombre corto del aula */
 
-IF(
+IF( /* Condicional */
     (
-        (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Facultad de Derecho"
+        (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Facultad de Derecho" /* Si es de la facultad de derecho */
         AND
-        (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '')) = "Pregrado"
+        (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '')) = "Pregrado" /* y si es de nivel pregrado */
     )
     OR
-    (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Departamento de Idiomas - FDE"
+    (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Departamento de Idiomas - FDE" /* o si es del departamento de idiomas de la Facultad de Derecho */
     OR 
     (
-        (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Departamento de Matemáticas" 
+        (select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Departamento de Matemáticas" /* o si es del departamento de matematicas */
         AND
-        INSTR(lower(c.fullname),"derecho") != 0
+        INSTR(lower(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
     )
-    ,
- (SELECT count(cest.id) estudiantes FROM {course} cest
-INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
-INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
-INNER JOIN {role} rest ON rest.id = raest.roleid
-INNER JOIN {user} uest ON uest.id = raest.userid
-INNER JOIN {course_categories} ccest on cest.category = ccest.id
-inner join {enrol} eest on eest.courseid =cest.id
-INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
-WHERE 
-(
-    (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-01-30") /* PREGRADO CAL A */
-    OR
-    (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* PREGRADO CAL B */
-)
-AND
-(
+    , /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
+    (SELECT count(cest.id) estudiantes FROM {course} cest
+    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+    INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {course_categories} ccest on cest.category = ccest.id
+    inner join {enrol} eest on eest.courseid =cest.id
+    INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
+    WHERE 
     (
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", '') = 5 /* Facultad de Derecho */
+        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-01-30") /* PREGRADO CAL A */
+        OR
+        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* PREGRADO CAL B */
     )
-    OR REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", '') = 795 /* Departamento de Idiomas - FDE */
-    OR
+    AND
     (
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", '') = 339 /* Departamento de Matemáticas */
-        AND 
-        INSTR(lower(cest.fullname),"derecho") != 0 /* Aula de la Facultad de Derecho */
+        (
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+            AND 
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", '') = 5 /* Facultad de Derecho */
+        )
+        OR REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", '') = 795 /* Departamento de Idiomas - FDE */
+        OR
+        (
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", '') = 339 /* Departamento de Matemáticas */
+            AND 
+            INSTR(lower(cest.fullname),"derecho") != 0 /* Aula de la Facultad de Derecho */
+        )
     )
-)
-AND rest.shortname = "student"
-AND cest.id = c.id
-GROUP BY cest.id
-Order BY cest.id asc
-),
-(SELECT count(cest.id) estudiantes FROM {course} cest
-INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
-INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
-INNER JOIN {role} rest ON rest.id = raest.roleid
-INNER JOIN {user} uest ON uest.id = raest.userid
-INNER JOIN {course_categories} ccest on cest.category = ccest.id
-inner join {enrol} eest on eest.courseid =cest.id
-INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
-WHERE 
-DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16"
-AND rest.shortname = "student"
-AND cest.id = c.id
-GROUP BY cest.id
-Order BY cest.id asc)) AS "Estudiantes 2021-2",
+    AND rest.shortname = "student"
+    AND cest.id = c.id
+    GROUP BY cest.id
+    Order BY cest.id asc
+    ), /* Sino, se aplica el filtro según la fecha normal semestral */ 
+    (SELECT count(cest.id) estudiantes FROM {course} cest
+    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+    INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {course_categories} ccest on cest.category = ccest.id
+    inner join {enrol} eest on eest.courseid =cest.id
+    INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
+    WHERE 
+    DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16"
+    AND rest.shortname = "student"
+    AND cest.id = c.id
+    GROUP BY cest.id
+    Order BY cest.id asc)
+) AS "Estudiantes 2021-2",
 
  (SELECT count(cest.id) estudiantes FROM {course} cest
 INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
