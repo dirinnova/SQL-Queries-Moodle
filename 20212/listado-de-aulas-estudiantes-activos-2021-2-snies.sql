@@ -1,3 +1,4 @@
+/* Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES */
 SELECT c.id Id_aula,
  (SELECT COUNT(*) as CantidadScorms
     FROM {scorm} sco 
@@ -8,8 +9,8 @@ SELECT c.id Id_aula,
     WHERE c.id=boo.course Group by boo.course ORDER BY boo.id DESC LIMIT 1) "Libro", /* Cantidad de recursos tipo libros en el aula */
 
  (SELECT cfo.value as CantidadUnidades
-FROM {course_format_options} cfo 
-WHERE cfo.courseid = c.id and cfo.name="numsections" ORDER BY cfo.id DESC LIMIT 1) "Unidades", /* cantidad de secciones por aula */
+    FROM {course_format_options} cfo 
+    WHERE cfo.courseid = c.id and cfo.name="numsections" ORDER BY cfo.id DESC LIMIT 1) "Unidades", /* cantidad de secciones por aula */
 
  c.fullname Aula, c.shortname NombreCorto, c.format Formato, c.visible AulaVisible,
 CASE
@@ -187,9 +188,9 @@ Order BY cpro.id asc) "Profesor email",
 FROM {course} c
 INNER JOIN {course_categories} cc on c.category = cc.id
 
-WHERE (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2
- OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6
-  OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11)
+WHERE (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* Pregrado */
+ OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* Posgrado */
+  OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* Educación Continuada */)
 
 GROUP BY c.id
 Order BY c.id asc
