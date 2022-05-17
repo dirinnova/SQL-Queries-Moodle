@@ -10,7 +10,7 @@ CASE
     WHEN LOCATE ("-M-i-", c.shortname) THEN "Blended"
     WHEN LOCATE ("-M-I-", c.shortname) THEN "Blended"
     ELSE "Aula apoyo"
-END "Tipo aula", /* Tipo de aula según el nombre corto del aula */
+END "Tipo aula nombre corto", /* Tipo de aula según el nombre corto del aula */
 
  (SELECT 
  REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','')
