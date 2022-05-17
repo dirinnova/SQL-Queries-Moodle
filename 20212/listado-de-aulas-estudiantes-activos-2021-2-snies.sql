@@ -1,4 +1,4 @@
-/* Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES 2021-2 */
+/* Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES 2021-2 Derecho Calendario A 2021-2022 y Pregrado Calendario B 2021-2022 */
 SELECT c.id Id_aula,
  (SELECT COUNT(*) as CantidadScorms
     FROM {scorm} sco 
@@ -50,9 +50,9 @@ IF( /* Condicional */
     INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
     WHERE 
     (
-        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-01-30") /* PREGRADO CAL A */
+        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-01-30") /* Pregrado Calendario A 2021-2022 */
         OR
-        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* PREGRADO CAL B */
+        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* Pregrado Calendario B 2021-2022 */
     )
     AND
     (
