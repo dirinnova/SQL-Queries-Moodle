@@ -1,4 +1,4 @@
-/* Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES */
+/* Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES 2021-2 */
 SELECT c.id Id_aula,
  (SELECT COUNT(*) as CantidadScorms
     FROM {scorm} sco 
