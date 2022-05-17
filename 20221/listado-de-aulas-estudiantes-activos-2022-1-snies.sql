@@ -42,13 +42,7 @@ INNER JOIN {course_categories} ccest on cest.category = ccest.id
 inner join {enrol} eest on eest.courseid =cest.id
 INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
 WHERE 
-/*
-Facultad de Derecho	Todas
-Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas	Todas
-Departamento de Matemáticas	Algunas
-Centro de Idiomas y Cultura	Algunas
-Centro de Información - Secretaria General	Algunas
-*/
+
 IF(  /* Condicional */
     REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
     AND
