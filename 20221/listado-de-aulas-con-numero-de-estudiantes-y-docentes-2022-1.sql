@@ -90,6 +90,46 @@ IF(  /* Condicional */
         )
     )
     ,
+    ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
+        ""
+    )
+    , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) >= "2022-06-16" AND REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+)
+AND rest.shortname = "student"
+AND cest.id = c.id
+GROUP BY cest.id
+Order BY cest.id asc
+) AS "Estudiantes pregrado fecha cierre mayor 15jun2022", /* Aulas con estudiantes activos para el periodo 2022-1*/ 
+
+(SELECT count(cest.id) estudiantes FROM {course} cest
+INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+INNER JOIN {role} rest ON rest.id = raest.roleid
+INNER JOIN {user} uest ON uest.id = raest.userid
+INNER JOIN {course_categories} ccest on cest.category = ccest.id
+inner join {enrol} eest on eest.courseid =cest.id
+INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
+WHERE 
+IF(  /* Condicional */
+    REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+    AND
+    (        
+        (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Facultad de Derecho" /* Si es de la facultad de derecho */
+        OR
+        (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas" /* o si es del Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas */
+        OR
+        (
+            (
+                (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Departamento de Matemáticas" /* o si es del departamento de matematicas */
+                OR
+                (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Centro de Idiomas y Cultura" /* o si es del Centro de Idiomas y Cultura */
+            )
+            AND
+            INSTR(lower(cest.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
+        )
+    )
+    ,
     ( /* aplican los filtros de fechas del calendario A de Derecho */
         (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2022-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2023-01-30") /* Pregrado Calendario A 2022-2023 */
     )
@@ -100,7 +140,7 @@ AND rest.shortname = "student"
 AND cest.id = c.id
 GROUP BY cest.id
 Order BY cest.id asc
-) AS "Estudiantes CAL A derecho 2022-2023", /* Aulas con estudiantes activos Pregrado Calendario A 2022-2023 */ 
+) AS "Est CAL A derecho 2022-2023", /* Aulas con estudiantes activos Pregrado Calendario A 2022-2023 */ 
 
 (SELECT count(cest.id) estudiantes FROM {course} cest
 INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -140,7 +180,49 @@ AND rest.shortname = "student"
 AND cest.id = c.id
 GROUP BY cest.id
 Order BY cest.id asc
-) AS "Estudiantes CAL B derecho 2021-2022", /* Aulas con estudiantes activos Pregrado Calendario B 2021-2022 */ 
+) AS "Est CAL B derecho 2021-2022", /* Aulas con estudiantes activos Pregrado Calendario B 2021-2022 */ 
+
+(SELECT count(cest.id) estudiantes FROM {course} cest
+INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+INNER JOIN {role} rest ON rest.id = raest.roleid
+INNER JOIN {user} uest ON uest.id = raest.userid
+INNER JOIN {course_categories} ccest on cest.category = ccest.id
+inner join {enrol} eest on eest.courseid =cest.id
+INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
+WHERE 
+IF(  /* Condicional que solo muestran solo los estudiantes de las aulas de derecho pregrado 2022-1 */
+    REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+    AND
+    (        
+        (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Facultad de Derecho" /* Si es de la facultad de derecho */
+        OR
+        (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas" /* o si es del Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas */
+        OR
+        (
+            (
+                (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Departamento de Matemáticas" /* o si es del departamento de matematicas */
+                OR
+                (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Centro de Idiomas y Cultura" /* o si es del Centro de Idiomas y Cultura */
+            )
+            AND
+            INSTR(lower(cest.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
+        )
+    )
+    ,
+    ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
+        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2022-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2023-01-30") /* Pregrado Calendario A 2022-2023 */
+        OR 
+        (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* Pregrado Calendario B 2021-2022 */
+    )
+    , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
+        ""
+)
+AND rest.shortname = "student"
+AND cest.id = c.id
+GROUP BY cest.id
+Order BY cest.id asc
+) AS "Est CAL AB derecho 2022-1", /* Aulas con estudiantes activos Pregrado Calendario A & B 2022-1 */ 
 
  (SELECT count(cest.id) estudiantes FROM {course} cest
 INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
