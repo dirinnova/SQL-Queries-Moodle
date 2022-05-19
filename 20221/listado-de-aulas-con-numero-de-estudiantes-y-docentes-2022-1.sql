@@ -93,14 +93,14 @@ IF(  /* Condicional */
     ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
         ""
     )
-    , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
-        DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) >= "2022-06-16" AND REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+    , /* Solo se muestran aulas con estudiantes con fecha finalización 15/06/2022 se valida 2022-06-16-00:59*/ 
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d-%H:%i' ) >= "2022-06-16-01:00" AND REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
 )
 AND rest.shortname = "student"
 AND cest.id = c.id
 GROUP BY cest.id
 Order BY cest.id asc
-) AS "Estudiantes pregrado fecha cierre mayor 15jun2022", /* Aulas con estudiantes activos para el periodo 2022-1*/ 
+) AS "Estudiantes pregrado fecha cierre mayor 15jun2022", /* Aulas con estudiantes activos fecha de cierre mayor 15 junio 2022 */ 
 
 (SELECT count(cest.id) estudiantes FROM {course} cest
 INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
