@@ -1,5 +1,5 @@
 /* Nuevos informes semestre Aulas por Facultad - Departamento 2022-1 */
-SELECT distinct ccc.name as "ID DEPA", "2021" as "AÑO","II" as "PERIODO/SEMESTRE",
+SELECT distinct ccc.name as "ID DEPA", "2022" as "AÑO","I" as "PERIODO/SEMESTRE",
 REPLACE((select cat.name from {course_categories} cat where cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(ccc.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccc.path, "/", 3-1)) + 1),"/", '')),"Facultad de ","") as "FACULTAD/DEPENDENCIA",
 IF(ccc.depth != 2,ccc.name,"No Aplica") as "DEPARTAMENTO/PROGRAMA",
 
