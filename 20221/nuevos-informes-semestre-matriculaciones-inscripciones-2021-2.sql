@@ -1,186 +1,124 @@
 /* Nuevos informes semestre Matriculaciones - Inscripciones 2022-1 */
-SELECT (@cnt := @cnt + 1) AS Id, "2021" as "AÑO","II" as "PERIODO/SEMESTRE", REPLACE(ccc.name,"Facultad de ","") as "FACULTAD/DEPENDENCIA", (SELECT cat.name FROM mdl_course_categories cat where cat.id = ccc.parent) Nivel,
+SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REPLACE(ccc.name,"Facultad de ","") as "FACULTAD/DEPENDENCIA", (SELECT cat.name FROM mdl_course_categories cat where cat.id = ccc.parent) Nivel,
 
-IF(ccc.name = "Facultad de Derecho"
-    OR ccc.name = "Departamento de Idiomas - FDE"
-    OR ccc.name = "Departamento de Matemáticas",
-(SELECT COUNT(distinct u.id) as "Inscripciones Estudiantes Derecho"
-FROM mdl_course c
-INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
-INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
-INNER JOIN mdl_role r ON r.id = ra.roleid
-INNER JOIN mdl_user u ON u.id = ra.userid
-INNER JOIN mdl_course_categories cc on c.category = cc.id
-inner join mdl_enrol e on e.courseid =c.id
-INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
-WHERE r.shortname = "student"
-
-AND
 (
-    (
-        ccc.parent = 2 
-        AND 
+    SELECT COUNT(DISTINCT u.id) as "Estudiantes Activos"
+    FROM mdl_course c
+    INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
+    INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
+    INNER JOIN mdl_role r ON r.id = ra.roleid
+    INNER JOIN mdl_user u ON u.id = ra.userid
+    INNER JOIN mdl_course_categories cc on c.category = cc.id
+    inner join mdl_enrol e on e.courseid =c.id
+    INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
+    WHERE
+
+    IF(  /* Condicional */
         REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
-        AND 
-        (
-            DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2022-01-30" /* PREGRADO CAL A */
-            OR 
-            DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2022-07-31" /* PREGRADO CAL B */
-        )
+        AND
+        ccc.parent = 2
         AND
         (
-            REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') != 339 /* Diferente Departamento de Matemáticas */
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 5 /* Si es de la Facultad de Derecho */
+            OR
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 1511 /* Si es del Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas */
             OR
             (
-                REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 339 /* Departamento de Matemáticas */
+                (
+                    REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 339 /* Si es del Departamento de Matemáticas */
+                    OR
+                    REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 374 /* Si es del Centro de Idiomas y Cultura */
+                )
                 AND
-                INSTR(lower(c.fullname),"derecho") != 0 /* Aula de la Facultad de Derecho */
+                INSTR(lower(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
+            )
+        )
+        ,
+        ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
+            (DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2022-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2023-01-30") /* Pregrado Calendario A 2022-2023 */
+            OR 
+            (DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* Pregrado Calendario B 2021-2022 */
+        )
+        , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
+        (
+            DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2022-01-01"
+            AND 
+            (
+                (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 AND ccc.parent = 2) /* PREGRADO */
+                OR 
+                (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 AND ccc.parent = 6) /* POSGRADO */
+                OR 
+                (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 AND ccc.parent = 11) /* EC */
             )
         )
     )
-    OR
-    (
-        ccc.parent = 2 
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
-        AND 
-        DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" 
-        AND
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 339 /* Departamento de Matemáticas */
-        AND
-        INSTR(lower(c.fullname),"derecho") = 0 /* Aula que no es de la Facultad de Derecho */
-    )
-    OR
-    (
-        ccc.parent = 6 
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */  
-        AND 
-        DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" 
-    )
-    OR
-    (
-        ccc.parent = 11 
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* EC */
-        AND 
-        DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" 
-    )
-)
+    AND r.shortname = "student"
+    AND 
+    (select cccc.name from mdl_course_categories cccc where cccc.id
+    = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
+    = ccc.name
+    Order BY c.id asc
+) as "ESTUDIANTES",
 
-AND (select cccc.name from mdl_course_categories cccc where cccc.id
- = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", ''))) = ccc.name
-Order BY c.id asc
-),
-(SELECT COUNT(distinct u.id) as "Inscripciones Estudiantes"
-FROM mdl_course c
-INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
-INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
-INNER JOIN mdl_role r ON r.id = ra.roleid
-INNER JOIN mdl_user u ON u.id = ra.userid
-INNER JOIN mdl_course_categories cc on c.category = cc.id
-inner join mdl_enrol e on e.courseid =c.id
-INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
-WHERE r.shortname = "student"
-AND
-DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16"
-AND REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = ccc.parent
-  
-AND (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", ''))) = ccc.name
-Order BY c.id asc
-)
-) as "Estudiantes",
-
-
-IF(ccc.name = "Facultad de Derecho"
-    OR ccc.name = "Departamento de Idiomas - FDE"
-    OR ccc.name = "Departamento de Matemáticas",
-(SELECT COUNT(u.id) as "Inscripciones Estudiantes Derecho"
-FROM mdl_course c
-INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
-INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
-INNER JOIN mdl_role r ON r.id = ra.roleid
-INNER JOIN mdl_user u ON u.id = ra.userid
-INNER JOIN mdl_course_categories cc on c.category = cc.id
-inner join mdl_enrol e on e.courseid =c.id
-INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
-WHERE r.shortname = "student"
-
-AND
 (
-    (
-        ccc.parent = 2 
-        AND 
+    SELECT COUNT(u.id) as "Inscripciones Estudiantes"
+    FROM mdl_course c
+    INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
+    INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
+    INNER JOIN mdl_role r ON r.id = ra.roleid
+    INNER JOIN mdl_user u ON u.id = ra.userid
+    INNER JOIN mdl_course_categories cc on c.category = cc.id
+    inner join mdl_enrol e on e.courseid =c.id
+    INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
+    WHERE
+
+    IF(  /* Condicional */
         REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
-        AND 
-        (
-            DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2022-01-30" /* PREGRADO CAL A */
-            OR 
-            DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2022-07-31" /* PREGRADO CAL B */
-        )
+        AND
+        ccc.parent = 2
         AND
         (
-            REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') != 339 /* Diferente Departamento de Matemáticas */
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 5 /* Si es de la Facultad de Derecho */
+            OR
+            REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 1511 /* Si es del Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas */
             OR
             (
-                REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 339 /* Departamento de Matemáticas */
+                (
+                    REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 339 /* Si es del Departamento de Matemáticas */
+                    OR
+                    REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 374 /* Si es del Centro de Idiomas y Cultura */
+                )
                 AND
-                INSTR(lower(c.fullname),"derecho") != 0 /* Aula de la Facultad de Derecho */
+                INSTR(lower(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
+            )
+        )
+        ,
+        ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
+            (DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2022-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2023-01-30") /* Pregrado Calendario A 2022-2023 */
+            OR 
+            (DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ue.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* Pregrado Calendario B 2021-2022 */
+        )
+        , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
+        (
+            DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2022-01-01"
+            AND 
+            (
+                (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 AND ccc.parent = 2) /* PREGRADO */
+                OR 
+                (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 AND ccc.parent = 6) /* POSGRADO */
+                OR 
+                (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 AND ccc.parent = 11) /* EC */
             )
         )
     )
-    OR
-    (
-        ccc.parent = 2 
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
-        AND 
-        DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" 
-        AND
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 339 /* Departamento de Matemáticas */
-        AND
-        INSTR(lower(c.fullname),"derecho") = 0 /* Aula que no es de la Facultad de Derecho */
-    )
-    OR
-    (
-        ccc.parent = 6 
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */  
-        AND 
-        DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" 
-    )
-    OR
-    (
-        ccc.parent = 11 
-        AND 
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* EC */
-        AND 
-        DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16" 
-    )
-)
+    AND r.shortname = "student"
+    AND 
+    (select cccc.name from mdl_course_categories cccc where cccc.id
+    = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
+    = ccc.name
+    Order BY c.id asc
+) as "INSCRIPCIONES"
 
-AND (select cccc.name from mdl_course_categories cccc where cccc.id
- = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", ''))) = ccc.name
-Order BY c.id asc
-),
-(SELECT COUNT(u.id) as "Inscripciones Estudiantes"
-FROM mdl_course c
-INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
-INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
-INNER JOIN mdl_role r ON r.id = ra.roleid
-INNER JOIN mdl_user u ON u.id = ra.userid
-INNER JOIN mdl_course_categories cc on c.category = cc.id
-inner join mdl_enrol e on e.courseid =c.id
-INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
-WHERE r.shortname = "student"
-AND
-DATE_FORMAT(FROM_UNIXTIME(ue.timestart), '%Y-%m-%d' ) >= "2021-06-16"
-AND REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = ccc.parent
-  
-AND (select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", ''))) = ccc.name
-Order BY c.id asc
-)
-) as "Incripciones"
 
 FROM mdl_course_categories ccc
 CROSS JOIN (SELECT @cnt := 0) AS dummy
