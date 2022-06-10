@@ -96,7 +96,7 @@ IF(ccc.depth != 2,ccc.name,"No Aplica") as "DEPARTAMENTO/PROGRAMA",
     Order BY c.id asc
 ) as "EDUCACIÓN CONTINUADA",
 
-DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
+DATE_FORMAT(CURDATE(), '%/d%/m%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE

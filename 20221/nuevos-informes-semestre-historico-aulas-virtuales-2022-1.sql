@@ -59,7 +59,7 @@ SELECT distinct ccc.name as "Id",REPLACE(ccc.name,"Facultad de ","") as "FACULTA
     Order BY c.id asc
 ) as "AULAS ACTIVAS",
 
-DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
+DATE_FORMAT(CURDATE(), '%/d%/m%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE (ccc.parent = 2 /* PREGRADO */
