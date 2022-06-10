@@ -143,7 +143,7 @@ SELECT distinct ccc.name as "Id","2022" as "AÑO","I" as "PERIODO/SEMESTRE",REPL
     Order BY c.id asc
 ) as "EDUCACIÓN CONTINUADA",
 
-DATE_FORMAT(CURDATE(), '%/d%/m%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
+DATE_FORMAT(CURDATE(), '%d/%m/%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE (ccc.parent = 2 /* PREGRADO */

@@ -1,5 +1,5 @@
 /* Nuevos informes semestre Histórico Aulas Virtuales 2022-1 */
-SELECT distinct ccc.name as "Id",REPLACE(ccc.name,"Facultad de ","") as "FACULTAD/DEPENDENCIA", "2021-II" as "AÑO/SEMESTRE",
+SELECT distinct ccc.name as "Id",REPLACE(ccc.name,"Facultad de ","") as "FACULTAD/DEPENDENCIA", "2022-I" as "AÑO/SEMESTRE",
 
 (
     SELECT COUNT(distinct c.id) as "Aulas activas derecho, dep mate derecho, idiomas derecho CAL AB"
@@ -59,7 +59,7 @@ SELECT distinct ccc.name as "Id",REPLACE(ccc.name,"Facultad de ","") as "FACULTA
     Order BY c.id asc
 ) as "AULAS ACTIVAS",
 
-DATE_FORMAT(CURDATE(), '%/d%/m%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
+DATE_FORMAT(CURDATE(), '%d/%m/%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE (ccc.parent = 2 /* PREGRADO */

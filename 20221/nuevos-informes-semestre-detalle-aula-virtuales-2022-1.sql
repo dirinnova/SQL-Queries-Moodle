@@ -22,7 +22,7 @@ c.fullname AS "CURSO",
 
 "1" AS "GRUPOS",
 
-DATE_FORMAT(CURDATE(), '%/d%/m%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
+DATE_FORMAT(CURDATE(), '%d/%m/%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM {course} c
 INNER JOIN {course_categories} cc on c.category = cc.id
