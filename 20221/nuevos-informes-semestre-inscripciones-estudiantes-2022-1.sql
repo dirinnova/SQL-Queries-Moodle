@@ -110,6 +110,9 @@ SELECT distinct ccc.name AS "ID", REPLACE(ccc.name,"Facultad de ","") as "FACULT
     = ccc.name
     Order BY c.id asc
 ) as "ESTUDIANTES"
+,
+
+DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE (ccc.parent = 2 /* PREGRADO */

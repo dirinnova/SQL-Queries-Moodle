@@ -117,8 +117,9 @@ SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REP
     = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
     = ccc.name
     Order BY c.id asc
-) as "INSCRIPCIONES"
+) as "INSCRIPCIONES",
 
+DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 CROSS JOIN (SELECT @cnt := 0) AS dummy

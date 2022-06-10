@@ -141,7 +141,9 @@ SELECT distinct ccc.name as "Id","2022" as "AÑO","I" as "PERIODO/SEMESTRE",REPL
     = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
     = ccc.name
     Order BY c.id asc
-) as "EDUCACIÓN CONTINUADA"
+) as "EDUCACIÓN CONTINUADA",
+
+DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE (ccc.parent = 2 /* PREGRADO */

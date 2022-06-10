@@ -57,7 +57,9 @@ SELECT distinct ccc.name as "Id",REPLACE(ccc.name,"Facultad de ","") as "FACULTA
     = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
     = ccc.name
     Order BY c.id asc
-) as "AULAS ACTIVAS"
+) as "AULAS ACTIVAS",
+
+DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE (ccc.parent = 2 /* PREGRADO */

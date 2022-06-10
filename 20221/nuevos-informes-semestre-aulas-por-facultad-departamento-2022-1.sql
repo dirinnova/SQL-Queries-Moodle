@@ -94,7 +94,9 @@ IF(ccc.depth != 2,ccc.name,"No Aplica") as "DEPARTAMENTO/PROGRAMA",
         ((select cccc.name from mdl_course_categories cccc where cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 4),LENGTH(SUBSTRING_INDEX(cc.path, "/", 4-1)) + 1),"/", ''))) = ccc.name) /* Departamento/programa */
     )
     Order BY c.id asc
-) as "EDUCACIÓN CONTINUADA"
+) as "EDUCACIÓN CONTINUADA",
+
+DATE_FORMAT(CURDATE(), '%d de %M de %Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 WHERE
