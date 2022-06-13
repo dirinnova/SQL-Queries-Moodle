@@ -138,9 +138,40 @@ FROM
   OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6
     OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11)
 
-  AND (LOWER(c.shortname) LIKE "%-v-i-%" OR LOWER(c.shortname) LIKE "%-m-i-%" OR LOWER(c.shortname) LIKE "%-v-e-%") /* aulas solo 100% virtual y blended */
-  AND rest.shortname = "student"
+  AND 
+  (
+    LOWER(c.shortname) LIKE "%-v-i-%"
+    OR 
+    LOWER(c.shortname) LIKE "%-m-i-%" 
+    OR 
+    LOWER(c.shortname) LIKE "%-v-e-%"
+    OR
+    (
+      SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
+      FROM {context} ctxt
+      INNER JOIN {customfield_data} cfd ON cfd.contextid = ctxt.id
+      INNER JOIN {customfield_field} cff ON cff.id = cfd.fieldid
+      WHERE ctxt.instanceid = c.id
+    ) = "100% Virtual"
+    OR
+    (
+      SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
+      FROM {context} ctxt
+      INNER JOIN {customfield_data} cfd ON cfd.contextid = ctxt.id
+      INNER JOIN {customfield_field} cff ON cff.id = cfd.fieldid
+      WHERE ctxt.instanceid = c.id
+    ) = "Blended"
+    OR
+    (
+      SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
+      FROM {context} ctxt
+      INNER JOIN {customfield_data} cfd ON cfd.contextid = ctxt.id
+      INNER JOIN {customfield_field} cff ON cff.id = cfd.fieldid
+      WHERE ctxt.instanceid = c.id
+    ) = "Mooc"
+  ) /* aulas solo 100% virtual y blended */
 
+  AND rest.shortname = "student"
   GROUP BY c.id, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )
   ORDER BY c.id, fin DESC
 ) aulas 
