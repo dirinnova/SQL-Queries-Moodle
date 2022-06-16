@@ -1,16 +1,16 @@
 /* Nuevos informes semestre Matriculaciones - Inscripciones 2022-1 */
-SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REPLACE(ccc.name,"Facultad de ","") as "FACULTAD/DEPENDENCIA", (SELECT cat.name FROM mdl_course_categories cat where cat.id = ccc.parent) Nivel,
+SELECT (@cnt := @cnt + 1) AS Id, "2022" AS "AÑO","I" AS "PERIODO/SEMESTRE", REPLACE(ccc.name,"Facultad de ","") AS "FACULTAD/DEPENDENCIA", (SELECT cat.name FROM mdl_course_categories cat WHERE cat.id = ccc.parent) Nivel,
 
 (
-    SELECT COUNT(DISTINCT u.id) as "Estudiantes Activos"
+    SELECT COUNT(DISTINCT u.id) AS "Estudiantes Activos"
     FROM mdl_course c
     INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
     INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
     INNER JOIN mdl_role r ON r.id = ra.roleid
     INNER JOIN mdl_user u ON u.id = ra.userid
-    INNER JOIN mdl_course_categories cc on c.category = cc.id
-    inner join mdl_enrol e on e.courseid =c.id
-    INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
+    INNER JOIN mdl_course_categories cc ON c.category = cc.id
+    INNER JOIN mdl_enrol e ON e.courseid =c.id
+    INNER JOIN mdl_user_enrolments ue ON ue.userid = u.id AND ue.enrolid = e.id
     WHERE
 
     IF(  /* Condicional */
@@ -30,7 +30,7 @@ SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REP
                     REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 374 /* Si es del Centro de Idiomas y Cultura */
                 )
                 AND
-                INSTR(lower(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
+                INSTR(LOWER(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
             )
         )
         ,
@@ -54,22 +54,22 @@ SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REP
     )
     AND r.shortname = "student"
     AND 
-    (select cccc.name from mdl_course_categories cccc where cccc.id
+    (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id
     = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
     = ccc.name
-    Order BY c.id asc
-) as "ESTUDIANTES",
+    ORDER BY c.id ASC
+) AS "ESTUDIANTES",
 
 (
-    SELECT COUNT(u.id) as "Inscripciones Estudiantes"
+    SELECT COUNT(u.id) AS "Inscripciones Estudiantes"
     FROM mdl_course c
     INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
     INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
     INNER JOIN mdl_role r ON r.id = ra.roleid
     INNER JOIN mdl_user u ON u.id = ra.userid
-    INNER JOIN mdl_course_categories cc on c.category = cc.id
-    inner join mdl_enrol e on e.courseid =c.id
-    INNER JOIN mdl_user_enrolments ue on ue.userid = u.id and ue.enrolid = e.id
+    INNER JOIN mdl_course_categories cc ON c.category = cc.id
+    INNER JOIN mdl_enrol e ON e.courseid =c.id
+    INNER JOIN mdl_user_enrolments ue ON ue.userid = u.id AND ue.enrolid = e.id
     WHERE
 
     IF(  /* Condicional */
@@ -89,7 +89,7 @@ SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REP
                     REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '') = 374 /* Si es del Centro de Idiomas y Cultura */
                 )
                 AND
-                INSTR(lower(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
+                INSTR(LOWER(c.fullname),"derecho") != 0 /* y que dentro del nombre largo tengan la palabra "derecho" */
             )
         )
         ,
@@ -113,13 +113,13 @@ SELECT (@cnt := @cnt + 1) AS Id, "2022" as "AÑO","I" as "PERIODO/SEMESTRE", REP
     )
     AND r.shortname = "student"
     AND 
-    (select cccc.name from mdl_course_categories cccc where cccc.id
+    (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id
     = (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')))
     = ccc.name
-    Order BY c.id asc
-) as "INSCRIPCIONES",
+    ORDER BY c.id ASC
+) AS "INSCRIPCIONES",
 
-DATE_FORMAT(CURDATE(), '%d/%m/%Y') as "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
+DATE_FORMAT(CURDATE(), '%d/%m/%Y') AS "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 
 FROM mdl_course_categories ccc
 CROSS JOIN (SELECT @cnt := 0) AS dummy
