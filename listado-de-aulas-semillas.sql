@@ -1,4 +1,5 @@
-SELECT c.id AS "Id", c.fullname  AS "Aula semilla", c.shortname AS "Nombre corto", c.timecreated AS "Fecha de creación",
+/* Listado de aulas Semillas */
+SELECT c.id AS "Id", c.fullname AS "Aula semilla", c.shortname AS "Nombre corto", c.timecreated AS "Fecha de creación",
 CASE
     WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
     WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
@@ -28,9 +29,9 @@ END "Tipo aula nombre corto",
   INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
   INNER JOIN {role} rest ON rest.id = raest.roleid
   INNER JOIN {user} uest ON uest.id = raest.userid
-  INNER JOIN {course_categories} ccest on cest.category = ccest.id
-  inner join {enrol} eest on eest.courseid =cest.id
-  INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
+  INNER JOIN {course_categories} ccest ON cest.category = ccest.id
+  INNER JOIN {enrol} eest ON eest.courseid =cest.id
+  INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
   WHERE
   (
     DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) >= CURDATE()
@@ -59,9 +60,9 @@ END "Tipo aula nombre corto",
   INNER JOIN {role_assignments} rapro ON ctxpro.id = rapro.contextid
   INNER JOIN {role} rpro ON rpro.id = rapro.roleid
   INNER JOIN {user} upro ON upro.id = rapro.userid
-  INNER JOIN {course_categories} ccpro on cpro.category = ccpro.id
-  inner join {enrol} epro on epro.courseid =cpro.id
-  INNER JOIN {user_enrolments} uepro on uepro.userid = upro.id and uepro.enrolid = epro.id
+  INNER JOIN {course_categories} ccpro ON cpro.category = ccpro.id
+  INNER JOIN {enrol} epro ON epro.courseid =cpro.id
+  INNER JOIN {user_enrolments} uepro ON uepro.userid = upro.id and uepro.enrolid = epro.id
   WHERE (rpro.shortname = "teacher" OR rpro.shortname = "editingteacher")
   AND cpro.id = c.id
   GROUP BY cpro.id
@@ -75,9 +76,9 @@ END "Tipo aula nombre corto",
   INNER JOIN {role_assignments} rapro ON ctxpro.id = rapro.contextid
   INNER JOIN {role} rpro ON rpro.id = rapro.roleid
   INNER JOIN {user} upro ON upro.id = rapro.userid
-  INNER JOIN {course_categories} ccpro on cpro.category = ccpro.id
-  inner join {enrol} epro on epro.courseid =cpro.id
-  INNER JOIN {user_enrolments} uepro on uepro.userid = upro.id and uepro.enrolid = epro.id
+  INNER JOIN {course_categories} ccpro ON cpro.category = ccpro.id
+  INNER JOIN {enrol} epro ON epro.courseid =cpro.id
+  INNER JOIN {user_enrolments} uepro ON uepro.userid = upro.id and uepro.enrolid = epro.id
   WHERE (rpro.shortname = "teacher" OR rpro.shortname = "editingteacher")
   AND cpro.id = c.id
   GROUP BY cpro.id
@@ -85,22 +86,22 @@ END "Tipo aula nombre corto",
 ) AS "Profesor email",
  
  c.visible AS "Visible",
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '')) CAT1,
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) CAT2,
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 4),LENGTH(SUBSTRING_INDEX(cc.path, "/", 4-1)) + 1),"/", '')) CAT3,
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 5),LENGTH(SUBSTRING_INDEX(cc.path, "/", 5-1)) + 1),"/", '')) CAT4,
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 6),LENGTH(SUBSTRING_INDEX(cc.path, "/", 6-1)) + 1),"/", '')) CAT5,
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 7),LENGTH(SUBSTRING_INDEX(cc.path, "/", 7-1)) + 1),"/", '')) CAT6,
- (select cat.name from {course_categories} cat where cat.id = 
+ (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 8),LENGTH(SUBSTRING_INDEX(cc.path, "/", 8-1)) + 1),"/", '')) CAT7
 FROM {course} c
-INNER JOIN {course_categories} cc on c.category = cc.id
+INNER JOIN {course_categories} cc ON c.category = cc.id
 
 WHERE REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 319 /* SEMILLAS */
 
