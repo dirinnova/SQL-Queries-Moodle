@@ -1,5 +1,5 @@
 /* Nuevos informes semestre Docentes x Facultad 2022-1 */
-SELECT DISTINCT ccc.name AS "ID", REPLACE(ccc.name,"Facultad de ","") AS "FACULTAD/DEPENDENCIA", "2022-I" AS "AÑO/SEMESTRE",
+SELECT DISTINCT ccc.name AS "ID", "2022" AS "AÑO", "I" AS "PERIODO/SEMESTRE", REPLACE(ccc.name,"Facultad de ","") AS "FACULTAD/DEPENDENCIA",
 
 (
     SELECT COUNT(DISTINCT u.id) AS "Profesores"
