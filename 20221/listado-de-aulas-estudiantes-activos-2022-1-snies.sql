@@ -4,19 +4,19 @@ SELECT c.id AS "Id",
     SELECT COUNT(*) AS CantidadScorms
     FROM {scorm} sco 
     WHERE c.id=sco.course Group by sco.course ORDER BY sco.id DESC LIMIT 1
-) AND "Scorm", /* Cantidad de contenido SCORM por aula */
+) AS "Scorm", /* Cantidad de contenido SCORM por aula */
 
 (
     SELECT COUNT(*) AS CantidadBooks
     FROM {book} boo 
     WHERE c.id=boo.course Group by boo.course ORDER BY boo.id DESC LIMIT 1
-) AND "Libro", /* Cantidad de recursos tipo libros en el aula */
+) AS "Libro", /* Cantidad de recursos tipo libros en el aula */
 
 (
     SELECT cfo.value AS CantidadUnidades
     FROM {course_format_options} cfo 
     WHERE cfo.courseid = c.id AND cfo.name="numsections" ORDER BY cfo.id DESC LIMIT 1
-) AND "Unidades", /* cantidad de secciones por aula */
+) AS "Unidades", /* cantidad de secciones por aula */
 
 c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
 
