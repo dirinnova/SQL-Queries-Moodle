@@ -1,8 +1,14 @@
 /* Nuevos informes semestre Productos E-learning 2022-1 */
 SELECT c.id AS "Id", "2022" AS "AÑO", "I" AS "PERIODO/SEMESTRE",
-
- (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
-  REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) AS "FACULTAD/DEPENDENCIA",
+REPLACE(
+    (
+        SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
+            REPLACE(
+                SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", ''
+                )
+        )
+    ,"Facultad de ",""
+) AS "FACULTAD/DEPENDENCIA",
 
  (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 5),LENGTH(SUBSTRING_INDEX(cc.path, "/", 5-1)) + 1),"/", '')) AS "DEPARTAMENTO",
@@ -14,7 +20,7 @@ SELECT c.id AS "Id", "2022" AS "AÑO", "I" AS "PERIODO/SEMESTRE",
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 4),LENGTH(SUBSTRING_INDEX(cc.path, "/", 4-1)) + 1),"/", '')) AS "PROGRAMA",
 
 c.fullname AS "PRODUCTOS",
-
+/*
 CASE
     WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
     WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
@@ -30,9 +36,9 @@ END "TIPO", /* Tipo de aula según el nombre corto del aula */
     INNER JOIN {customfield_field} cff ON cff.id = cfd.fieldid
     WHERE ctxt.instanceid = c.id
 ) AS "Tipo Aula", /* Tipo de aula según el campo adicional dentro del aula "Other fields" */
-
+/*
 "" AS "CLIENTE", "" AS "ENTIDAD", "" AS "OBJETO CONTRATO",
-
+*/
 (
     SELECT GROUP_CONCAT(CONCAT(upro.firstname, " ",upro.lastname) SEPARATOR ' / ') AS Profesor
     FROM {course} cpro
@@ -47,10 +53,10 @@ END "TIPO", /* Tipo de aula según el nombre corto del aula */
     AND cpro.id = c.id
     GROUP BY cpro.id
     ORDER BY cpro.id ASC
-) AS "DOCENTE",
-
+) AS "DOCENTE"
+/*
 "" AS "DURACIÓN (HORAS)", "" AS "DURACIÓN (SEMANAS)"
-
+*/
 FROM {course} c
 INNER JOIN {course_categories} cc ON c.category = cc.id
 
