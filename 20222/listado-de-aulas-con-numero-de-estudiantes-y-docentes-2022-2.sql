@@ -92,14 +92,14 @@ END "Tipo aula nombre corto", /* Tipo de aula según el nombre corto del aula */
         ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
             ""
         )
-        , /* Solo se muestran aulas con estudiantes con fecha finalización 10/12/2022 se valida 2022-12-11-00:59*/ 
-            DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d-%H:%i' ) >= "2022-12-11-01:00" AND REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+        , /* Solo se muestran aulas con estudiantes con fecha finalización 15/12/2022 se valida 2022-12-16-00:59*/ 
+            DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d-%H:%i' ) >= "2022-12-16-01:00" AND REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
     )
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     ORDER BY cest.id ASC
-) AS "Estudiantes pregrado fecha cierre mayor 10dic2022", /* Aulas con estudiantes activos fecha de cierre mayor 15 junio 2022 */ 
+) AS "Estudiantes pregrado fecha cierre mayor 15dic2022", /* Aulas con estudiantes activos fecha de cierre mayor 15 diciembre 2022 */ 
 
 (
     SELECT COUNT(cest.id) estudiantes FROM {course} cest
