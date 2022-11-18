@@ -1,4 +1,5 @@
-/* Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES 2022-2 Derecho Calendario A 2022-2023 y Pregrado Calendario B 2022-2023 */
+/* Listado de aulas estudiantes activos 2022-2 SNIES
+Esta consulta devuelve el listado de aulas con cantidad de SCORMS, libros, unidades filtradas con el proposito de generar las cifras para SNIES 2022-2 Derecho Calendario A 2022-2023 y Pregrado Calendario B 2022-2023 */
 SELECT c.id AS "Id",
 (
     SELECT COUNT(*) AS CantidadScorms
@@ -19,12 +20,6 @@ SELECT c.id AS "Id",
 ) AS "Unidades", /* cantidad de secciones por aula */
 
 c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
-
-CASE
-    WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
-    WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
-    ELSE "Aula apoyo"
-END "Tipo aula nombre corto", /* Tipo de aula según el nombre corto del aula */
 
 (
     SELECT 
@@ -54,6 +49,8 @@ END "Tipo aula nombre corto", /* Tipo de aula según el nombre corto del aula */
             (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Facultad de Derecho" /* Si es de la facultad de derecho */
             OR
             (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas" /* o si es del Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas */
+            OR
+            (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 4),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 4-1)) + 1),"/", ''))) = "Facultad de Derecho" /* o si son Examenes de Clasificación de la Facultad de Derecho */
             OR
             (
                 (

@@ -46,6 +46,8 @@ IF(
         OR
         (SELECT cat.name FROM {course_categories} cat WHERE cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Instituto de Estudios Interdisciplinarios Richard Tovar Cárdenas"
         OR
+        (SELECT cat.name FROM {course_categories} cat WHERE cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 4),LENGTH(SUBSTRING_INDEX(cc.path, "/", 4-1)) + 1),"/", '')) = "Facultad de Derecho" /* o si son Examenes de Clasificación de la Facultad de Derecho */
+        OR
         (
             (
                 (SELECT cat.name FROM {course_categories} cat WHERE cat.id = REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 3),LENGTH(SUBSTRING_INDEX(cc.path, "/", 3-1)) + 1),"/", '')) = "Departamento de Matemáticas"

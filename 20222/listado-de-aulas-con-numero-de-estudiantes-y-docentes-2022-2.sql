@@ -1,11 +1,6 @@
 /* Listado de aulas con número de estudiantes y docentes 2022-2
 Esta consulta devuelve el listado de aulas con total de estudiantes y docentes por cada aula 2022-2 (Derecho Calendario A 2022-2023) y (Pregrado Calendario B 2022-2023) */
 SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
-CASE
-    WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
-    WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
-    ELSE "Aula apoyo"
-END "Tipo aula nombre corto", /* Tipo de aula según el nombre corto del aula */
 
 (
     SELECT 
