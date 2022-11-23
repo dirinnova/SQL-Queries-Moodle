@@ -75,18 +75,12 @@
   INNER JOIN {feedback_value} fv ON fv.item = fi.id
 
   WHERE 
-  (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2
-  OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6
-    OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11)
+  (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+  OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */
+    OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* EDUCACIÓN CONTINUADA */)
 
   AND 
   (
-    LOWER(c.shortname) LIKE "%-v-i-%"
-    OR 
-    LOWER(c.shortname) LIKE "%-m-i-%" 
-    OR 
-    LOWER(c.shortname) LIKE "%-v-e-%"
-    OR
     (
       SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
       FROM {context} ctxt
@@ -111,7 +105,7 @@
       WHERE ctxt.instanceid = c.id
     ) = "Mooc"
   ) /* aulas solo 100% virtual y blended */
-  AND LOWER(fe.name) LIKE "%satisfacci%"
-  AND fv.value != "" AND fv.value != " " AND fv.value != "\n"
+  AND LOWER(fe.name) LIKE "%satisfacci%" /* Solo aulas con encuestas que tengan en el nombre "satisfacci" */
+  AND fv.value != "" AND fv.value != " " AND fv.value != "\n" AND fv.value != "\r" /* solo se muestran respuestas validas, no vacias, sin espacios o saltos de página */
 
   ORDER BY c.id DESC

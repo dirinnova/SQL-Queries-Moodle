@@ -21,20 +21,14 @@ Visibilidad del curso (aula)
 Es la configuración que tiene el aula en las opciones general del aula
 */
 SELECT Id_curso AS "Id", Curso AS "Aula", NombreCorto AS "Nombre corto", Formato, CursoVisible AS "Visible",
-Tipoaula AS "Tipo Aula",/*Tipoaulanombrecorto AS "Tipo aula nombre corto",*/nombreencuesta AS "Encuesta de Satisfacción", TotalPreguntas AS "Preguntas Encuesta", TotalRespuestas AS "Respuestas Encuesta", /*Totalrespuestasdetalle AS "Detalle respuestas",*/Estudiantesactivoshoy AS "Estudiantes activos a hoy",Estudiantes, fechainicio, fechafin,
+Tipoaula AS "Tipo Aula",nombreencuesta AS "Encuesta de Satisfacción", TotalPreguntas AS "Preguntas Encuesta", TotalRespuestas AS "Respuestas Encuesta", Estudiantesactivoshoy AS "Estudiantes activos a hoy",Estudiantes, fechainicio, fechafin,
 Profesor,Profesoremail AS "Profesor email",CAT1,CAT2,CAT3,CAT4,CAT5,CAT6,CAT7, MAX(fin)
 FROM 
 (
   SELECT ueest.id idenrol,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
   ueest.timestart fechainicio, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' ) fechafin,
   count(DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )) fin,
-  /*
-  CASE
-    WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
-    WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
-    ELSE "Aula apoyo"
-  END Tipoaulanombrecorto,
-*/
+
   (
     SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
     FROM {context} ctxt
@@ -51,7 +45,6 @@ FROM
     INNER JOIN {feedback_item} fipreg ON fipreg.feedback = fepreg.id
     INNER JOIN {feedback_value} fvpreg ON fvpreg.item = fipreg.id
     WHERE fepreg.course = c.id
-    /* fepreg.id = survey.id */
     AND LOWER(fepreg.name) LIKE "%satisfacci%"
   ) TotalPreguntas,
 
@@ -61,20 +54,9 @@ FROM
     INNER JOIN {feedback_item} fipreg ON fipreg.feedback = fepreg.id
     INNER JOIN {feedback_value} fvpreg ON fvpreg.item = fipreg.id
     WHERE fepreg.course = c.id
-    /* fepreg.id = survey.id */
     AND LOWER(fepreg.name) LIKE "%satisfacci%"
   ) TotalRespuestas,
-/*
-  (
-    SELECT COUNT(fvpreg.id) Respuestas
-    FROM {feedback} fepreg
-    INNER JOIN {feedback_item} fipreg ON fipreg.feedback = fepreg.id
-    INNER JOIN {feedback_value} fvpreg ON fvpreg.item = fipreg.id
-    WHERE fepreg.course = c.id
-    AND fvpreg.value != "" AND fvpreg.value != " " AND fvpreg.value != "\n"
-    AND LOWER(fepreg.name) LIKE "%satisfacci%"
-  ) Totalrespuestasdetalle,
-*/
+
   (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -169,12 +151,6 @@ FROM
 
   AND 
   (
-    LOWER(c.shortname) LIKE "%-v-i-%"
-    OR 
-    LOWER(c.shortname) LIKE "%-m-i-%" 
-    OR 
-    LOWER(c.shortname) LIKE "%-v-e-%"
-    OR
     (
       SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
       FROM {context} ctxt
@@ -200,7 +176,7 @@ FROM
     ) = "Mooc"
   ) /* aulas solo 100% virtual y blended */
   AND rest.shortname = "student"
-  AND LOWER(survey.name) LIKE "%satisfacci%"
+  AND LOWER(survey.name) LIKE "%satisfacci%" /* Solo aulas con encuestas que tengan en el nombre "satisfacci" */
 
   GROUP BY c.id, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )
   ORDER BY c.id, fin DESC
