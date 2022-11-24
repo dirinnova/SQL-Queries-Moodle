@@ -1,7 +1,22 @@
-  /* Listado respuestas de encuestas de satisfacción aulas 100% virtual y blended
+/* Listado respuestas de encuestas de satisfacción aulas 100% virtual y blended
+Esta consulta devuelve el listado respuestas de las encuestas de satisfacción de aulas solo 100% virtual y blended */  
+
+/* 
+AÑO	"PERIODO/SEMESTRE"	MEDIO	ESTRATEGIA DE CAPACITACIÓN	Fecha	PARTICIPANTE	CORREO ELECTRÓNICO	PREGUNTA	RESPUESTA
+ */
+
+SELECT t.idrta AS "ID respuesta", t.Id_curso, t.fechainicio, t.fechafin, t.anio AS "AÑO", t.periodosemestre AS "PERIODO/SEMESTRE", t.curso AS "Aula", t.NombreCorto AS "Aula Nombre corto", t.tipoaula AS "Tipo aula", t.nombreencuesta AS "Nombre de la Encuesta", t.pregunta AS "Pregunta", t.respuesta AS "Respuesta", t.CAT1, t.CAT2, t.CAT3, t.CAT4, t.CAT5, t.CAT6, t.CAT7
+FROM
+(
+  SELECT fv.id idrta,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
+  ueest.timestart fechainicio, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' ) fechafin, DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y' ) anio, 
   
-  Esta consulta devuelve el listado respuestas de las encuestas de satisfacción de aulas solo 100% virtual y blended */  
-  SELECT fv.id id,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
+  (
+    CASE 
+      WHEN (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%m' ) >= 01 AND DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%m' ) <= 06) THEN "I"
+      WHEN (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%m' ) >= 07 AND DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%m' ) <= 12) THEN "II"
+    END
+  ) periodosemestre,  
 
   fe.name nombreencuesta, 
     
@@ -35,7 +50,7 @@
         WHEN fi.typ = "textarea" THEN fv.value
         ELSE TRIM(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(fi.presentation,'|⃝','|'),'r>>>>>',''),'|',fv.value),'|',-1), '\r', ''), '\n', ''))
     END
-  ) as Respuesta,
+  ) respuesta,
 
   (
     SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
@@ -74,10 +89,14 @@
   INNER JOIN {feedback_item} fi ON fi.feedback = fe.id
   INNER JOIN {feedback_value} fv ON fv.item = fi.id
 
+  INNER JOIN {feedback_completed} fc ON fc.feedback = fe.id AND fc.userid = uest.id
+
   WHERE 
-  (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
-  OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */
-    OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* EDUCACIÓN CONTINUADA */)
+  (
+    REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+    OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */
+    OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* EDUCACIÓN CONTINUADA */
+  )
 
   AND 
   (
@@ -109,3 +128,4 @@
   AND fv.value != "" AND fv.value != " " AND fv.value != "\n" AND fv.value != "\r" /* solo se muestran respuestas validas, no vacias, sin espacios o saltos de página */
 
   ORDER BY c.id DESC
+) t
