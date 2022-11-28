@@ -1,5 +1,5 @@
 /* Nuevos informes semestre Totales inscripciones y estudiantes 2022-2 */
-SELECT 
+SELECT "2022" AS "AÑO","II" AS "PERIODO/SEMESTRE",
 (
     SELECT COUNT(u.id) AS "Inscripciones Estudiantes"
     FROM mdl_course c
@@ -55,7 +55,7 @@ SELECT
     AND r.shortname = "student"
 
     ORDER BY c.id ASC
-) AS "INSCRIPCIONES PERIODO 2022-2"
+) AS "INSCRIPCIONES"
 ,
 (
     SELECT COUNT(DISTINCT u.id) AS "Estudiantes Activos"
@@ -112,6 +112,6 @@ SELECT
     AND r.shortname = "student"
 
     ORDER BY c.id ASC
-) AS "ESTUDIANTES PERIODO 2022-2"
+) AS "ESTUDIANTES"
 ,
 DATE_FORMAT(CURDATE(), '%d/%m/%Y') AS "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
