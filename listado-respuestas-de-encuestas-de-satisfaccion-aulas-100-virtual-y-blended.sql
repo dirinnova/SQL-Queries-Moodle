@@ -5,7 +5,7 @@ Esta consulta devuelve el listado respuestas de las encuestas de satisfacción d
 AÑO	"PERIODO/SEMESTRE"	MEDIO	ESTRATEGIA DE CAPACITACIÓN	Fecha	PARTICIPANTE	CORREO ELECTRÓNICO	PREGUNTA	RESPUESTA
  */
 
-SELECT t.idrta AS "ID respuesta", t.Id_curso, t.fechainicio, t.fechafin, t.anio AS "AÑO", t.periodosemestre AS "PERIODO/SEMESTRE", t.curso AS "Aula", t.NombreCorto AS "Aula Nombre corto", t.tipoaula AS "Tipo aula", t.nombreencuesta AS "Nombre de la Encuesta", t.pregunta AS "Pregunta", t.respuesta AS "Respuesta", t.CAT1, t.CAT2, t.CAT3, t.CAT4, t.CAT5, t.CAT6, t.CAT7
+SELECT t.idrta AS "ID respuesta", t.Id_curso, t.fechainicio, t.fechafin, t.anio AS "AÑO", t.periodosemestre AS "PERIODO/SEMESTRE", t.curso AS "Aula", t.NombreCorto AS "Aula Nombre corto", t.tipoaula AS "Tipo aula", t.nombreencuesta AS "Nombre de la Encuesta", t.pregunta AS "Pregunta", t.respuesta AS "Respuesta", t.CAT1, t.CAT2, t.CAT3, t.CAT4, t.CAT5, t.CAT6, t.CAT7,DATE_FORMAT(CURDATE(), '%d/%m/%Y') AS "FECHA DE CORTE DE DATOS (dd/mm/aaaa)"
 FROM
 (
   SELECT fv.id idrta,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
