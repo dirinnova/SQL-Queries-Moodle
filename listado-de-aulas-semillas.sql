@@ -1,10 +1,5 @@
 /* Listado de aulas Semillas */
 SELECT c.id AS "Id", c.fullname AS "Aula semilla", c.shortname AS "Nombre corto", c.timecreated AS "Fecha de creación",
-CASE
-    WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
-    WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
-    ELSE "Aula apoyo"
-END "Tipo aula nombre corto",
 
 (
   SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
