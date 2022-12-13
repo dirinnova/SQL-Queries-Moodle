@@ -19,14 +19,14 @@ FROM
   ) periodosemestre,  
 
   fe.name nombreencuesta, 
-    
+
   fi.name pregunta,
 
   (
     CASE
         WHEN (LOCATE('c>>>>>',fi.presentation) > 0 AND fi.typ != "textarea")  THEN 
         (
-            SELECT REPLACE(GROUP_CONCAT(TRIM(JSON_EXTRACT(CAST(CONCAT('["', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fi.presentation,'r>>>>>',''),'c>>>>>',''),'\n',''),'\r',''),'|⃝','|'), '|', '","'), '"]') AS JSON),CONCAT('$[',CAST(JSON_EXTRACT(CAST(CONCAT('["', REPLACE(fv.value, '|', '","'), '"]') AS JSON), CONCAT('$[', num.Number-1, ']')) AS SIGNED)-1, ']'))) SEPARATOR ', ' ), '"', '') as valorPrueba      
+            SELECT REPLACE(REPLACE(GROUP_CONCAT(TRIM(JSON_EXTRACT(CAST(CONCAT('["', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fi.presentation,'r>>>>>',''),'c>>>>>',''),'\n',''),'\r',''),'|⃝','|'), '|', '","'), '"]') AS JSON),CONCAT('$[',CAST(JSON_EXTRACT(CAST(CONCAT('["', REPLACE(fv.value, '|', '","'), '"]') AS JSON), CONCAT('$[', num.Number-1, ']')) AS SIGNED)-1, ']'))) SEPARATOR ', ' ), '"', ''),'<<<<<1','') as valorPrueba      
             
             FROM
             (
@@ -48,7 +48,7 @@ FROM
             WHERE num.Number <= FORMAT((length(fv.value)/2)+0.5,0)  
         )
         WHEN fi.typ = "textarea" THEN fv.value
-        ELSE TRIM(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(fi.presentation,'|⃝','|'),'r>>>>>',''),'|',fv.value),'|',-1), '\r', ''), '\n', ''))
+        ELSE TRIM(REPLACE(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(fi.presentation,'|⃝','|'),'r>>>>>',''),'|',fv.value),'|',-1), '\r', ''), '\n', ''),'<<<<<1',''))
     END
   ) respuesta,
 
@@ -91,7 +91,7 @@ FROM
 
   INNER JOIN {feedback_completed} fc ON fc.feedback = fe.id AND fc.userid = uest.id
 
-  WHERE 
+  WHERE
   (
     REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
     OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */
