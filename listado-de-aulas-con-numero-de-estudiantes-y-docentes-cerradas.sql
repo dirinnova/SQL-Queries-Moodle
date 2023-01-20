@@ -16,12 +16,12 @@ END "Tipo aula nombre corto",
     INNER JOIN {enrol} eest ON eest.courseid =cest.id
     INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
     WHERE 
-    DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) < "2020-07-15"
+    DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) < "2021-07-15"
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos hasta 2020-1",
+) AS "Estudiantes activos hasta 2021-1",
 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
@@ -159,12 +159,33 @@ END "Tipo aula nombre corto",
     INNER JOIN {enrol} eest ON eest.courseid =cest.id
     INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
     WHERE 
-    DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) >= "2020-07-15"
+    (
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) > "2021-01-01" 
+        AND
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2021-12-31"
+    )
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes superior 2020-1",
+) AS "Estudiantes activos Entre 2021",
+
+(
+    SELECT count(cest.id) estudiantes FROM {course} cest
+    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+    INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {course_categories} ccest ON cest.category = ccest.id
+    INNER JOIN {enrol} eest ON eest.courseid =cest.id
+    INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
+    WHERE 
+    DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) >= "2021-07-15"
+    AND rest.shortname = "student"
+    AND cest.id = c.id
+    GROUP BY cest.id
+    Order BY cest.id asc
+) AS "Estudiantes superior 2021-1",
 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
