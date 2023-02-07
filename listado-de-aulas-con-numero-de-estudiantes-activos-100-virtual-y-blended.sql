@@ -19,20 +19,16 @@ Visibilidad del curso (aula)
 Es la configuración que tiene el aula en las opciones general del aula
 */
 SELECT Id_curso AS "Id", Curso AS "Aula", NombreCorto AS "Nombre corto", Formato, CursoVisible AS "Visible",
-Tipoaula AS "Tipo Aula",Tipoaulanombrecorto AS "Tipo aula nombre corto",encuesta AS "Encuesta Satisfacción",
-Estudiantesactivoshoy AS "Estudiantes activos a hoy",Estudiantes, fechainicio, fechafin,
+Tipoaula AS "Tipo Aula",encuesta AS "Encuesta Satisfacción",
+EstudiantesActivosCobro AS "Estudiantes Si accedieron al aula",
+Estudiantes,Estudiantesactivoshoy AS "Estudiantes activos a hoy", fechainicio, fechafin,
 Profesor,Profesoremail AS "Profesor email",CAT1,CAT2,CAT3,CAT4,CAT5,CAT6,CAT7, MAX(fin)
 FROM 
 (
   SELECT ueest.id idenrol,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
   ueest.timestart fechainicio, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' ) fechafin,
   count(DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )) fin,
-  CASE
-    WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
-    WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
-    ELSE "Aula apoyo"
-  END Tipoaulanombrecorto,
-
+  
   (
     SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
     FROM {context} ctxt
@@ -48,6 +44,18 @@ FROM
     AND survey.course = c.id
   ) AS encuesta,
 
+  (
+    SELECT count(uestlast.timeaccess) acceso FROM {course} cest
+    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+    INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {user_lastaccess} uestlast ON uestlast.userid = uest.id AND uestlast.courseid = cest.id
+    WHERE rest.shortname = "student"
+    AND cest.id = c.id
+    Order BY cest.id asc    
+  ) EstudiantesActivosCobro,
+    
   (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
