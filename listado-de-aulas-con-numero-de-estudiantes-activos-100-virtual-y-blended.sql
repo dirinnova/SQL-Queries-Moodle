@@ -18,11 +18,11 @@ Visibilidad del curso (aula)
 ### Tipo Aula
 Es la configuración que tiene el aula en las opciones general del aula
 */
-SELECT Id_curso AS "Id", Curso AS "Aula", NombreCorto AS "Nombre corto", Formato, CursoVisible AS "Visible",
+SELECT Id_curso AS "Id", Curso AS "Aula", NombreCorto AS "Nombre corto", CursoVisible AS "Visible",
 Tipoaula AS "Tipo Aula",encuesta AS "Encuesta Satisfacción",
 EstudiantesActivosCobro AS "Estudiantes Si accedieron al aula",
-Estudiantes,Estudiantesactivoshoy AS "Estudiantes activos a hoy", fechainicio, fechafin,
-Profesor,Profesoremail AS "Profesor email",CAT1,CAT2,CAT3,CAT4,CAT5,CAT6,CAT7, MAX(fin)
+Estudiantes AS "Estudiantes Matriculados", fechainicio, fechafin,
+Profesor,Profesoremail AS "Profesor email",CAT1 AS "Nivel",CAT2 AS "Facultad/Dependencia",CAT3 AS "Programa",CAT4 AS "Programa/Periodo",CAT5,CAT6,CAT7, MAX(fin)
 FROM 
 (
   SELECT ueest.id idenrol,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
@@ -148,12 +148,6 @@ FROM
 
   AND 
   (
-    LOWER(c.shortname) LIKE "%-v-i-%"
-    OR 
-    LOWER(c.shortname) LIKE "%-m-i-%" 
-    OR 
-    LOWER(c.shortname) LIKE "%-v-e-%"
-    OR
     (
       SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
       FROM {context} ctxt
