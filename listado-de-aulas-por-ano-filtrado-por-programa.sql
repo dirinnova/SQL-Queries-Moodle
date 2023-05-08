@@ -1,4 +1,4 @@
-/* Listado de aulas por año filtrado por programa */
+/* Listado de aulas por año filtrado por programas */
 SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto",
 
 

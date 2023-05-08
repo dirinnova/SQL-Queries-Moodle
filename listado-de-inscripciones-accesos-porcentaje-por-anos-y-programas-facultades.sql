@@ -1,5 +1,5 @@
 /* 
-Listado de inscripciones-accesos-porcentaje por años y programas-facultades
+Listado de inscripciones-accesos-porcentaje por años y programas-facultades 
 Informe para facultades o programas (usualmente para acreditación) por años
 creación de aulas, estudiantes, inscripciones, accesos y porcentaje de accesos por años
  */
