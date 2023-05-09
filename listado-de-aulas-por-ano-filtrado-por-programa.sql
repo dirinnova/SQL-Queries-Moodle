@@ -1,4 +1,6 @@
-/* Listado de aulas por año filtrado por programas */
+/* Listado de aulas por año filtrado por programas 
+Este reporte se utiliza para las solicitudes de acreditación de programas
+*/
 SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto",
 
 
