@@ -1,6 +1,11 @@
 /* Listado de aulas con número de estudiantes y docentes 2023-1
-Esta consulta devuelve el listado de aulas con total de estudiantes y docentes por cada aula 2023-1 (Derecho Calendario A 2023-2024) y (Pregrado Calendario B 2022-2023) */
-SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
+Esta consulta devuelve el listado de aulas con total de estudiantes y docentes por cada aula 2023-1 (Derecho Calendario A 2023-2024) y (Pregrado Calendario B 2022-2023) 
+
+Se deben ajustar las fechas de inicio de los calendarios A y B que se encuentran en la parte final de la consulta
+*/
+SELECT c.id AS "Id", 
+
+c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
 
 (
     SELECT 
@@ -44,12 +49,12 @@ SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.form
         )
         ,
         ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2023-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2024-01-30") /* Pregrado Calendario A 2023-2024 */
+            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @calAfechainicio AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= @calAfechafin) /* Pregrado Calendario A 2023-2024 */
             OR 
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2022-06-18" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2023-07-31") /* Pregrado Calendario B 2022-2023 */
+            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @calBfechainicio AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= @calBfechafin) /* Pregrado Calendario B 2022-2023 */
         )
         , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
-            DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2023-01-01"
+            DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @fechainiciosemestral
     )
     AND rest.shortname = "student"
     AND cest.id = c.id
@@ -132,7 +137,7 @@ SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.form
         )
         ,
         ( /* aplican los filtros de fechas del calendario A de Derecho */
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2023-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2024-01-30") /* Pregrado Calendario A 2022-2023 */
+            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @calAfechainicio AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= @calAfechafin) /* Pregrado Calendario A 2022-2023 */
         )
         ,
             ""
@@ -175,7 +180,7 @@ SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.form
         )
         ,
         ( /* aplican los filtros de fechas del calendario B de Derecho */
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2022-06-18" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2023-07-31") /* Pregrado Calendario B 2022-2023 */
+            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @calBfechainicio AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= @calBfechafin) /* Pregrado Calendario B 2022-2023 */
         )
         , 
             ""
@@ -218,9 +223,9 @@ SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.form
         )
         ,
         ( /* aplican los filtros de fechas del calendario A y calendario B de Derecho */
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2023-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2024-01-30") /* Pregrado Calendario A 2023-2024 */
+            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @calAfechainicio AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= @calAfechafin) /* Pregrado Calendario A 2023-2024 */
             OR 
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2022-06-18" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2023-07-31") /* Pregrado Calendario B 2022-2023 */
+            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= @calBfechainicio AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= @calBfechafin) /* Pregrado Calendario B 2022-2023 */
         )
         , /* Sino, se aplica el filtro según la fecha normal semestral  */ 
             ""
@@ -340,6 +345,22 @@ SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.form
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 8),LENGTH(SUBSTRING_INDEX(cc.path, "/", 8-1)) + 1),"/", '')) CAT7
 FROM {course} c
 INNER JOIN {course_categories} cc ON c.category = cc.id
+,(SELECT 
+/* 
+-------------------------------------------------------------------------------------------------------------------------
+Estas fechas se deben actualizar cada semestre */
+
+    @calAfechainicio := "2023-01-01", /* (año-mes-día) Fecha inicial del semestre calendario A en derecho pregrado (1 año duración) */
+    @calAfechafin := "2024-01-30", /* (año-mes-día) Fecha final del semestre calendario A en derecho pregrado (1 año duración) */
+    @calBfechainicio := "2022-06-18", /* (año-mes-día) Fecha inicial del semestre calendario B en derecho pregrado (1 año duración) */
+    @calBfechafin := "2023-07-31", /* (año-mes-día) Fecha final del semestre calendario B en derecho pregrado (1 año duración) */
+    @fechainiciosemestral := "2023-01-01" /* (año-mes-día) Fecha en la cual inicia el semestre del que se quiere sacar el reporte */
+
+/*  
+-------------------------------------------------------------------------------------------------------------------------
+*/
+    
+) AS vars
 
 WHERE (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2 /* Pregrado */
  OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* Posgrado */
