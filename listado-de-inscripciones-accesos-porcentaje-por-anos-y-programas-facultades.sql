@@ -19,14 +19,14 @@ END "Año",
 
 (
     SELECT COUNT(DISTINCT c.id) AS "Aulas Activas"
-    FROM mdl_course c
-    INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
-    INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
-    INNER JOIN mdl_role r ON r.id = ra.roleid
-    INNER JOIN mdl_user u ON u.id = ra.userid
-    INNER JOIN mdl_course_categories cc ON c.category = cc.id
-    INNER JOIN mdl_enrol e ON e.courseid =c.id
-    INNER JOIN mdl_user_enrolments ue ON ue.userid = u.id AND ue.enrolid = e.id
+    FROM {course} c
+    INNER JOIN {context} ctx ON ctx.instanceid = c.id
+    INNER JOIN {role_assignments} ra ON ctx.id = ra.contextid
+    INNER JOIN {role} r ON r.id = ra.roleid
+    INNER JOIN {user} u ON u.id = ra.userid
+    INNER JOIN {course_categories} cc ON c.category = cc.id
+    INNER JOIN {enrol} e ON e.courseid =c.id
+    INNER JOIN {user_enrolments} ue ON ue.userid = u.id AND ue.enrolid = e.id
     WHERE 
     
     (
@@ -109,14 +109,14 @@ CONCAT(ROUND((@totalingresosMGIE * 100) / @totalinscripcionesMGIE, 1),"%") AS "P
 
 (
     SELECT COUNT(DISTINCT c.id) AS "Aulas Activas"
-    FROM mdl_course c
-    INNER JOIN mdl_context ctx ON ctx.instanceid = c.id
-    INNER JOIN mdl_role_assignments ra ON ctx.id = ra.contextid
-    INNER JOIN mdl_role r ON r.id = ra.roleid
-    INNER JOIN mdl_user u ON u.id = ra.userid
-    INNER JOIN mdl_course_categories cc ON c.category = cc.id
-    INNER JOIN mdl_enrol e ON e.courseid =c.id
-    INNER JOIN mdl_user_enrolments ue ON ue.userid = u.id AND ue.enrolid = e.id
+    FROM {course} c
+    INNER JOIN {context} ctx ON ctx.instanceid = c.id
+    INNER JOIN {role_assignments} ra ON ctx.id = ra.contextid
+    INNER JOIN {role} r ON r.id = ra.roleid
+    INNER JOIN {user} u ON u.id = ra.userid
+    INNER JOIN {course_categories} cc ON c.category = cc.id
+    INNER JOIN {enrol} e ON e.courseid =c.id
+    INNER JOIN {user_enrolments} ue ON ue.userid = u.id AND ue.enrolid = e.id
     WHERE 
     
     (
