@@ -1,11 +1,12 @@
 /* Listado de aulas con número de estudiantes y docentes */
 SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
+/*
 CASE
     WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
     WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
     ELSE "Aula apoyo"
 END "Tipo aula nombre corto",
-
+*/
 (
   SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
   FROM {context} ctxt
