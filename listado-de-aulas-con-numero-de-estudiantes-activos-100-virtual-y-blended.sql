@@ -21,14 +21,20 @@ Es la configuración que tiene el aula en las opciones general del aula
 SELECT Id_curso AS "Id", Curso AS "Aula", NombreCorto AS "Nombre corto", CursoVisible AS "Visible",
 Tipoaula AS "Tipo Aula",encuesta AS "Encuesta Satisfacción",
 EstudiantesActivosCobro AS "Estudiantes Si accedieron al aula",
-Estudiantes AS "Estudiantes Matriculados", fechainicio, fechafin,
+Estudiantes AS "Estudiantes Matriculados", logcreated AS "Fecha de creación", fechainicio, fechafin,
 Profesor,Profesoremail AS "Profesor email",CAT1 AS "Nivel",CAT2 AS "Facultad/Dependencia",CAT3 AS "Programa",CAT4 AS "Programa/Periodo",CAT5,CAT6,CAT7, MAX(fin)
 FROM 
 (
   SELECT ueest.id idenrol,c.id Id_curso, c.fullname Curso, c.shortname NombreCorto, c.format Formato, c.visible CursoVisible,
-  ueest.timestart fechainicio, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' ) fechafin,
+   c.timecreated fechacreacion,c.timemodified fechaedicion,ueest.timestart fechainicio, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' ) fechafin,
   count(DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )) fin,
   
+  (
+    SELECT SUBSTR(CONCAT(MIN(l.id), '|', l.timecreated),LOCATE('|',CONCAT(MIN(l.id), '|', l.timecreated))+1) logcreated
+    FROM {logstore_standard_log} l
+    WHERE l.courseid = c.id
+  ) logcreated,
+
   (
     SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
     FROM {context} ctxt
@@ -141,6 +147,7 @@ FROM
   INNER JOIN {course_categories} cc on c.category = cc.id
   inner join {enrol} eest on eest.courseid =c.id
   INNER JOIN {user_enrolments} ueest on ueest.userid = uest.id and ueest.enrolid = eest.id
+  
 
   WHERE (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 2
   OR REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6
@@ -174,6 +181,7 @@ FROM
   ) /* aulas solo 100% virtual y blended */
 
   AND rest.shortname = "student"
+
   GROUP BY c.id, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )
   ORDER BY c.id, fin DESC
 ) aulas 
