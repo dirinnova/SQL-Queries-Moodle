@@ -1,5 +1,5 @@
 /* Listado de aulas con número de estudiantes y docentes */
-SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
+SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", IF(c.visible = 1,"SI","NO") AS "Visible",
 /*
 CASE
     WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
@@ -7,6 +7,12 @@ CASE
     ELSE "Aula apoyo"
 END "Tipo aula nombre corto",
 */
+(
+  SELECT SUBSTR(CONCAT(MIN(l.id), '|', l.timecreated),LOCATE('|',CONCAT(MIN(l.id), '|', l.timecreated))+1) logcreated
+  FROM {logstore_standard_log} l
+  WHERE l.courseid = c.id
+) AS "Fecha de creación",
+
 (
   SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
   FROM {context} ctxt
