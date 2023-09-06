@@ -185,4 +185,9 @@ FROM
   GROUP BY c.id, DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%d/%m/%Y' )
   ORDER BY c.id, fin DESC
 ) aulas 
+
+WHERE
+
+YEAR(FROM_UNIXTIME(fechainicio)) = 2023 /* solo se visualizan aulas que inician su implementación en el año 2023 */
+
 GROUP BY Id_curso
