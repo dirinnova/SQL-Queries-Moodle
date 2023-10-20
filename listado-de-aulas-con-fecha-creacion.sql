@@ -12,13 +12,6 @@ SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto",
     ORDER BY l.id asc   
 ) as "fecha creación",
 
-(
-  SELECT SUBSTR(CONCAT(MIN(l.id), '|', l.timecreated),LOCATE('|',CONCAT(MIN(l.id), '|', l.timecreated))+1) logcreated
-  FROM {logstore_standard_log} l
-  WHERE l.courseid = c.id
-) AS "Fecha de creación",
-
-
 (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
 REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '')) CAT1,
 (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
@@ -44,6 +37,8 @@ OR
 REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 6 /* POSGRADO */
 OR 
 REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 11 /* EDUCACIÓN CONTINUADA */
+OR 
+REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 828 /* AULAS CERRADAS */
 )
 /* AND c.id >= 7314 */
 
