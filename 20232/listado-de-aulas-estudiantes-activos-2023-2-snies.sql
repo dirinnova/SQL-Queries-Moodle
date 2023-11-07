@@ -16,7 +16,7 @@ SELECT c.id AS "Id",
 (
     SELECT cfo.value AS CantidadUnidades
     FROM {course_format_options} cfo 
-    WHERE cfo.courseid = c.id AND cfo.name="numsections" ORDER BY cfo.id DESC LIMIT 1
+    WHERE cfo.courseid = c.id AND cfo.name LIKE '%numsections%' ORDER BY cfo.id DESC LIMIT 1
 ) AS "Unidades", /* cantidad de secciones por aula */
 
 c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
