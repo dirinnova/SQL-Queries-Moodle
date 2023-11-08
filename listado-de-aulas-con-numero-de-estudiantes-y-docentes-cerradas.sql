@@ -1,28 +1,25 @@
 /* Listado de aulas con número de estudiantes y docentes CERRADAS */
-SELECT c.id AS "Id", c.fullname AS "Aula", c.shortname AS "Nombre corto", c.format AS "Formato", c.visible AS "Visible",
-CASE
-    WHEN LOCATE ("-v-i-", LOWER(c.shortname)) THEN "100% Virtual"
-    WHEN LOCATE ("-m-i-", LOWER(c.shortname)) THEN "Blended"
-    ELSE "Aula apoyo"
-END "Tipo aula nombre corto",
+SELECT c.id AS "Id_aula", c.fullname AS "Aula", c.shortname AS "Nombrecorto",
+
+CONCAT(c.id,"-",c.shortname,".mbz") AS "Archivo",
+
+c.format AS "Formato", c.visible AS "Aulavisible",
 
 (
-    SELECT count(cest.id) estudiantes FROM {course} cest
-    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
-    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
-    INNER JOIN {role} rest ON rest.id = raest.roleid
-    INNER JOIN {user} uest ON uest.id = raest.userid
-    INNER JOIN {course_categories} ccest ON cest.category = ccest.id
-    INNER JOIN {enrol} eest ON eest.courseid =cest.id
-    INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
-    WHERE 
-    DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) < "2021-07-15"
-    AND rest.shortname = "student"
-    AND cest.id = c.id
-    GROUP BY cest.id
-    Order BY cest.id asc
-) AS "Estudiantes activos hasta 2021-1",
+  SELECT REPLACE(JSON_EXTRACT(CAST(CONCAT('["',REPLACE(REPLACE(JSON_EXTRACT(cff.configdata, '$.options'),'"',''),'\\r\\n','","'),'"]') as JSON), CONCAT('$[',cfd.intvalue-1,']')),'"','') AS "Tipo Aula"
+  FROM {context} ctxt
+  INNER JOIN {customfield_data} cfd ON cfd.contextid = ctxt.id
+  INNER JOIN {customfield_field} cff ON cff.id = cfd.fieldid
+  WHERE ctxt.instanceid = c.id
+) AS "Tipo Aula",
 
+(
+  SELECT SUBSTR(CONCAT(MIN(l.id), '|', l.timecreated),LOCATE('|',CONCAT(MIN(l.id), '|', l.timecreated))+1) logcreated
+  FROM {logstore_standard_log} l
+  WHERE l.courseid = c.id
+) AS "Fecha de creación",
+
+@a2015 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -38,12 +35,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2015-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2015",
+) AS "Estudiantes creados Entre 2015",
 
+@a2016 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -59,12 +58,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2016-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2016",
+) AS "Estudiantes creados Entre 2016",
 
+@a2017 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -80,12 +81,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2017-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2017",
+) AS "Estudiantes creados Entre 2017",
 
+@a2018 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -101,12 +104,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2018-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2018",
+) AS "Estudiantes creados Entre 2018",
 
+@a2019 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -122,12 +127,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2019-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2019",
+) AS "Estudiantes creados Entre 2019",
 
+@a2020 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -143,12 +150,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2020-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2020",
+) AS "Estudiantes creados Entre 2020",
 
+@a2021 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -164,12 +173,14 @@ END "Tipo aula nombre corto",
         AND
         DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2021-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes activos Entre 2021",
+) AS "Estudiantes creados Entre 2021",
 
+@a2022 := 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
@@ -180,51 +191,40 @@ END "Tipo aula nombre corto",
     INNER JOIN {enrol} eest ON eest.courseid =cest.id
     INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
     WHERE 
-    DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) >= "2021-07-15"
-    AND rest.shortname = "student"
-    AND cest.id = c.id
-    GROUP BY cest.id
-    Order BY cest.id asc
-) AS "Estudiantes superior 2021-1",
-
-(
-    SELECT count(cest.id) estudiantes FROM {course} cest
-    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
-    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
-    INNER JOIN {role} rest ON rest.id = raest.roleid
-    INNER JOIN {user} uest ON uest.id = raest.userid
-    INNER JOIN {course_categories} ccest ON cest.category = ccest.id
-    INNER JOIN {enrol} eest ON eest.courseid =cest.id
-    INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
-    WHERE 
-    IF(
-        REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 2),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 2-1)) + 1),"/", '') = 2 /* PREGRADO */
+    (
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) > "2022-01-01" 
         AND
-        (        
-                (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Facultad de Derecho"
-                OR
-                (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Departamento de Idiomas - FDE"
-                OR
-                (
-                    (SELECT cccc.name FROM mdl_course_categories cccc WHERE cccc.id = (REPLACE(SUBSTRING(SUBSTRING_INDEX(ccest.path, "/", 3),LENGTH(SUBSTRING_INDEX(ccest.path, "/", 3-1)) + 1),"/", ''))) = "Departamento de Matemáticas"
-                    AND
-                    INSTR(lower(cest.fullname),"derecho") != 0 /* Aula de la Facultad de Derecho */
-                )                
-        )
-        ,
-        (
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-01-01" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-01-30") /* PREGRADO CAL A */
-            OR 
-            (DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16" AND DATE_FORMAT(FROM_UNIXTIME(ueest.timeend), '%Y-%m-%d' ) <= "2022-07-31") /* PREGRADO CAL B */
-        )
-        ,
-            DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) >= "2021-06-16"
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2022-12-31"
     )
+    AND ueest.status = 0
     AND rest.shortname = "student"
     AND cest.id = c.id
     GROUP BY cest.id
     Order BY cest.id asc
-) AS "Estudiantes 2021-2",
+) AS "Estudiantes creados Entre 2022",
+
+@a2023 := 
+(
+    SELECT count(cest.id) estudiantes FROM {course} cest
+    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+    INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {course_categories} ccest ON cest.category = ccest.id
+    INNER JOIN {enrol} eest ON eest.courseid =cest.id
+    INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
+    WHERE 
+    (
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) > "2023-01-01" 
+        AND
+        DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2023-12-31"
+    )
+    AND ueest.status = 0
+    AND rest.shortname = "student"
+    AND cest.id = c.id
+    GROUP BY cest.id
+    Order BY cest.id asc
+) AS "Estudiantes creados Entre 2023",
 
 (
     SELECT count(cest.id) estudiantes FROM {course} cest
@@ -282,10 +282,28 @@ END "Tipo aula nombre corto",
     INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
     INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
     INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {course_categories} ccest ON cest.category = ccest.id
+    INNER JOIN {enrol} eest ON eest.courseid =cest.id
+    INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
     WHERE rest.shortname = "student"
+    AND ueest.status = 0
     AND cest.id = c.id
     Order BY cest.id asc
 ) AS "Estudiantes",
+
+CASE
+    WHEN @a2015 > 0 THEN 2015
+    WHEN @a2016 > 0 THEN 2016
+    WHEN @a2017 > 0 THEN 2017
+    WHEN @a2018 > 0 THEN 2018
+    WHEN @a2019 > 0 THEN 2019
+    WHEN @a2020 > 0 THEN 2020
+    WHEN @a2021 > 0 THEN 2021
+    WHEN @a2022 > 0 THEN 2022
+    WHEN @a2023 > 0 THEN 2023
+    ELSE 0
+END "Año", /* Año al que pertenecen las aulas según las inscripciones */
   
 (
     SELECT GROUP_CONCAT(CONCAT(upro.firstname, " ",upro.lastname) SEPARATOR ' / ') as Profesor
@@ -332,11 +350,12 @@ END "Tipo aula nombre corto",
  (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
   REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 7),LENGTH(SUBSTRING_INDEX(cc.path, "/", 7-1)) + 1),"/", '')) CAT6,
  (SELECT cat.name FROM {course_categories} cat WHERE cat.id = 
-  REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 8),LENGTH(SUBSTRING_INDEX(cc.path, "/", 8-1)) + 1),"/", '')) CAT7
+  REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 8),LENGTH(SUBSTRING_INDEX(cc.path, "/", 8-1)) + 1),"/", '')) CAT7  
+  
 FROM {course} c
 INNER JOIN {course_categories} cc ON c.category = cc.id
 
-WHERE (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 828 /* PREGRADO */)
+WHERE (REPLACE(SUBSTRING(SUBSTRING_INDEX(cc.path, "/", 2),LENGTH(SUBSTRING_INDEX(cc.path, "/", 2-1)) + 1),"/", '') = 828 /* CERRADAS */)
 
 GROUP BY c.id
 Order BY c.id asc
