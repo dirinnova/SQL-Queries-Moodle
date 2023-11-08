@@ -1,4 +1,6 @@
-/* Listado de aulas con número de estudiantes y docentes CERRADAS */
+/* Listado de aulas con número de estudiantes y docentes CERRADAS 
+Esta consulta se utiliza para realizar el backup, filtra estudiantes creados antes del 15 julio 2022
+*/
 SELECT c.id AS "Id_aula", c.fullname AS "Aula", c.shortname AS "Nombrecorto",
 
 CONCAT(c.id,"-",c.shortname,".mbz") AS "Archivo",
@@ -18,6 +20,24 @@ c.format AS "Formato", c.visible AS "Aulavisible",
   FROM {logstore_standard_log} l
   WHERE l.courseid = c.id
 ) AS "Fecha de creación",
+
+(
+    SELECT count(cest.id) estudiantes FROM {course} cest
+    INNER JOIN {context} ctxest ON ctxest.instanceid = cest.id
+    INNER JOIN {role_assignments} raest ON ctxest.id = raest.contextid
+    INNER JOIN {role} rest ON rest.id = raest.roleid
+    INNER JOIN {user} uest ON uest.id = raest.userid
+    INNER JOIN {course_categories} ccest ON cest.category = ccest.id
+    INNER JOIN {enrol} eest ON eest.courseid =cest.id
+    INNER JOIN {user_enrolments} ueest ON ueest.userid = uest.id and ueest.enrolid = eest.id
+    WHERE 
+    DATE_FORMAT(FROM_UNIXTIME(ueest.timestart), '%Y-%m-%d' ) < "2022-07-15"
+    AND ueest.status = 0
+    AND rest.shortname = "student"
+    AND cest.id = c.id
+    GROUP BY cest.id
+    Order BY cest.id asc
+) AS "Aulas antes del 15 julio 2022", /* Esta subconsulta se debe actualizar cada vez que se vuelva a realizar backup de la categoría aulas cerradas */
 
 @a2015 := 
 (
