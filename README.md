@@ -27,19 +27,19 @@ In the queries it's necessary that each one of the names is removed from the nam
 ## Information About Database Tables
 
 - `course:` Main table that contains the basic information of the courses (classrooms).
-[+Info v3.9](https://moodleschema.zoola.io/tables/course.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/course.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/course.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/course.html)
 - `context:` Intermediate table for the relationship between user role assignments.
-[+Info v3.9](https://moodleschema.zoola.io/tables/context.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/context.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/context.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/context.html)
 - `role_assignments:` Table that stores the assignment of user roles in different contexts.
-[+Info v3.9](https://moodleschema.zoola.io/tables/role_assignments.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/role_assignments.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/role_assignments.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/role_assignments.html)
 - `role:` Table that stores the different roles in Moodle.
-[+Info v3.9](https://moodleschema.zoola.io/tables/role.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/role.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/role.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/role.html)
 - `user:` Table that stores the data of each user.
-[+Info v3.9](https://moodleschema.zoola.io/tables/user.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/user.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/user.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/user.html)
 - `course_categories:` Table that stores the information about each category of the courses.
-[+Info v3.9](https://moodleschema.zoola.io/tables/course_categories.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/course_categories.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/course_categories.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/course_categories.html)
 - `enrol:` Table that stores information about instances of enrollment plugins used in courses, fields marked as custom have a plugin-defined meaning, they are not touched by the kernel. Create a new linked table if you need even more custom fields.
-[+Info v3.9](https://moodleschema.zoola.io/tables/enrol.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/enrol.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/enrol.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/enrol.html)
 - `user_enrolments:` Table that stores information about users who participate in courses (also known as enrolled users): all those who participate or are visible in the course, that is, both teachers and students.
-[+Info v3.9](https://moodleschema.zoola.io/tables/user_enrolments.html) [+Info v4.0](https://www.examulator.com/er/4.1/tables/user_enrolments.html)
+[+Info v3.9](https://moodleschema.zoola.io/tables/user_enrolments.html) [+Info v4.01](https://www.examulator.com/er/4.1/tables/user_enrolments.html)
 
