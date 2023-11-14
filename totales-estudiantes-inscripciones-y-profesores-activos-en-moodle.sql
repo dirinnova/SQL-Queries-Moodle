@@ -1,3 +1,10 @@
+/* Totales estudiantes, inscripciones y profesores activos en Moodle
+Esta consulta devuelve los totales de:
+Estudiantes Activos (sin Repetir)
+Incripciones Estudiantes Activos
+Profesores Activos (sin Repetir)
+Usuarios Activos (licencias Usadas Según Edulabs - últimos 30 Días)
+ */  
 SELECT 
     (   
         SELECT DATE_FORMAT(CURDATE(), '%m/%d/%Y' ) AS "Fecha"
